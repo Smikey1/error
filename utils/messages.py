@@ -1,5 +1,17 @@
-def success(data,message="Successful"):
-    return {"success":True, "message":message, "data":data}
+from typing import Any
 
-def failure(message="Something went wrong"):
-    return {"success":False,  "message":message }
+from pydantic import BaseModel
+
+
+class ResponseModel(BaseModel):
+    success: bool
+    message: str
+    data: Any | None
+
+
+def success(data, message="Successful") -> ResponseModel:
+    return ResponseModel(**{"success": True, "message": message, "data": data})
+
+
+def failure(message="Something went wrong") -> ResponseModel:
+    return ResponseModel(**{"success": False, "message": message})
