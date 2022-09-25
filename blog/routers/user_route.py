@@ -21,8 +21,8 @@ def all_user(db=db_instance):
     return success(all_users)
 
 
-@router.post("/", response_model=UserModelOut)
-async def create_user(request: UserModelIn, db: Session = db_instance):
+@router.post("/", response_model=ResponseModel)
+def create_user(request: UserModelIn, db: Session = db_instance):
     new_user = db_schemas.UserSchema(
         name=request.name,
         email=request.email,
@@ -32,12 +32,8 @@ async def create_user(request: UserModelIn, db: Session = db_instance):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    added_user = (
-        db.query(db_schemas.UserSchema)
-        .filter(db_schemas.UserSchema.id == new_user.id)
-        .first()
-    )
-    return success(added_user, "User Created Successfully")
+    # return new_user
+    return success(UserModelOut.from_orm(new_user), "User Created Successfully")
 
 
 @router.get("/{id}")
